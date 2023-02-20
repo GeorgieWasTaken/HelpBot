@@ -50,7 +50,7 @@ async def asking(message:types.Message, state: FSMContext):
 
 
 
-"""Сообщения от админа"""
+"""Сообщения от админа, которые бот берет из топика и отправляет юзеру"""
 @dp.message_handler(is_admin=True)
 async def answ(message:types.Message):
 
