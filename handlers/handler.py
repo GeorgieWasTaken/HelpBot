@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from states import Questions
 from aiogram.dispatcher.filters import Text
 from config import dp, bot, admin_id
-from keyboards import answer_on_menu, menu
+from keyboards import answer_on_menu, menu, stop_the_bot
 from aiogram.types import ReplyKeyboardRemove
 from config import dp
 
@@ -53,7 +53,7 @@ async def conv_start(message: types.Message):
 async def conv_start(message: types.Message):
     theme = message.text
 
-    await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stopthebot)
+    await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
     global user_id
     user_id = message.from_user.id
     global topic
@@ -67,16 +67,16 @@ async def conv_start(message: types.Message):
 """Юзер задает вопрос коучу"""
 
 
-@dp.message_handler(state=Questions.start)
-async def asking(message: types.Message, state: FSMContext):
-    text = message.text
-
-    if text == "Отмена":
-        await message.answer('Чат удален', reply_markup=menu)
-        await state.finish()
-        return
-
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
+# @dp.message_handler(state=Questions.start)
+# async def asking(message: types.Message, state: FSMContext):
+#     text = message.text
+#
+#     if text == "Отмена":
+#         await message.answer('Чат удален', reply_markup=menu)
+#         await state.finish()
+#         return
+#
+#     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
 
 """Сообщения от админа, которые бот берет из топика и отправляет юзеру"""
@@ -91,11 +91,11 @@ async def answ(message: types.Message):
 """Остановка бота"""
 
 
-# @dp.message_handler(Text(equals=["Остановить бота"]))
-# async def stopping(message: types.Message, state: FSMContext):
-#     await message.answer('Чат удален', reply_markup=menu)
-#     await state.finish()
-#     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
+@dp.message_handler(Text(equals=["Остановить бота"]))
+async def stopping(message: types.Message):
+    await message.answer('Чат удален', reply_markup=menu)
+
+
 
 
 
