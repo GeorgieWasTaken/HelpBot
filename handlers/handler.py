@@ -1,5 +1,4 @@
-# pornhub.com
-# xvideos.com
+
 import aiogram
 import logging
 from aiogram import types
@@ -28,21 +27,29 @@ dp.filters_factory.bind(MyFilter)
 """Бот спрашивает, к какому типу относится вопрос"""
 @dp.message_handler(Text(equals=["Задать вопрос"]))
 async def conv_start(message:types.Message):
-    await message.answer("Какой тип вопроса?",reply_markup=answer_on_menu)
-    await Questions.typeQ.set()
+    await message.answer("Какой тип вопроса?", reply_markup=answer_on_menu)
+    await Questions.topictheme.set()
 
-@dp.message_handler(state=Questions.typeQ)
+@dp.message_handler(state=Questions.topictheme)
 async def conv_start(message:types.Message):
+    global typeQ
     if message.text=="Личный":
         typeQ="Личный"
     else:
         typeQ="Общий"
+    await message.answer("Какова тема?", reply_markup=ReplyKeyboardRemove())
+    await Questions.typeQ.set()
 
-    await message.answer("Создан чат с коучем. Задавайте вопрос",reply_markup=ReplyKeyboardRemove())
+
+@dp.message_handler(state=Questions.typeQ)
+async def conv_start(message:types.Message):
+    theme = message.text
+
+    await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=ReplyKeyboardRemove())
     global user_id
     user_id = message.from_user.id
     global topic
-    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot', name=f"Аноним: Тип вопроса-{typeQ}")
+    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot', name=f"Тип вопроса-{typeQ}: {theme}")
     topic = Forum_topic.message_thread_id
     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic,
                            text="Сейчас будет задан анонимный вопрос")
