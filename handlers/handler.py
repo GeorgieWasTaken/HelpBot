@@ -1,3 +1,4 @@
+#мяу
 import aiogram
 import logging
 from aiogram import types
