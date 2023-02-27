@@ -5,3 +5,4 @@ class Questions(StatesGroup):
     start = State()
     temp=State()
     answer = State()
+    typeQ= State()

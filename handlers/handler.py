@@ -5,8 +5,8 @@ from aiogram.dispatcher import FSMContext
 from states import Questions
 from aiogram.dispatcher.filters import Text
 from config import dp, bot, admin_id
-
-
+from keyboards import answer_on_menu,menu
+from aiogram.types import ReplyKeyboardRemove
 from config import dp
 
 """Фильтр на сообщения от админа"""
@@ -23,16 +23,27 @@ class MyFilter(BoundFilter):
 
 dp.filters_factory.bind(MyFilter)
 
-"""Открытие чата с коучем"""
+"""Бот спрашивает, к какому типу относится вопрос"""
 @dp.message_handler(Text(equals=["Задать вопрос"]))
 async def conv_start(message:types.Message):
-    await message.answer('Создан чат с коучем. Задавайте вопрос')
+    await message.answer("Какой тип вопроса?",reply_markup=answer_on_menu)
+    await Questions.typeQ.set()
+
+@dp.message_handler(state=Questions.typeQ)
+async def conv_start(message:types.Message):
+    if message.text=="Личный":
+        typeQ="Личный"
+    else:
+        typeQ="Общий"
+
+    await message.answer("Создан чат с коучем. Задавайте вопрос",reply_markup=ReplyKeyboardRemove())
     global user_id
-    user_id=message.from_user.id
+    user_id = message.from_user.id
     global topic
-    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot',name='Аноним')
-    topic=Forum_topic.message_thread_id
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text="Сейчас будет задан анонимный вопрос")
+    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot', name=f"Аноним: Тип вопроса-{typeQ}")
+    topic = Forum_topic.message_thread_id
+    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic,
+                           text="Сейчас будет задан анонимный вопрос")
     await Questions.start.set()
 
 """Юзер задает вопрос коучу"""
@@ -41,7 +52,7 @@ async def asking(message:types.Message, state: FSMContext):
     text = message.text
 
     if text=="Отмена":
-        await message.answer('Чат удален')
+        await message.answer('Чат удален',reply_markup=menu)
         await state.finish()
         return
 

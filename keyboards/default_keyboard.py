@@ -25,3 +25,12 @@ coach = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+answer_on_menu = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Личный"),
+            KeyboardButton(text="Общий")
+        ],
+    ],
+    resize_keyboard=True
+)
