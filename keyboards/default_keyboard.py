@@ -34,7 +34,7 @@ answer_on_menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-stopthebot = ReplyKeyboardMarkup(
+stop_the_bot = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="Остановить бота")
