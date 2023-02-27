@@ -1,13 +1,12 @@
-
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 # Кнопки для главного меню
 menu = ReplyKeyboardMarkup(
     keyboard=[
-      [
-          KeyboardButton(text="Задать вопрос"),
-          KeyboardButton(text="Назначить встречу"),
-      ],
+        [
+            KeyboardButton(text="Задать вопрос"),
+            KeyboardButton(text="Назначить встречу"),
+        ],
 
     ],
     resize_keyboard=True
@@ -33,4 +32,14 @@ answer_on_menu = ReplyKeyboardMarkup(
         ],
     ],
     resize_keyboard=True
+)
+
+stopthebot = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Остановить бота")
+        ],
+    ],
+    resize_keyboard=True
+
 )
