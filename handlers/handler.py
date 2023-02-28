@@ -84,7 +84,7 @@ async def asking(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
 
-"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча хуй пизда"""
+"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча"""
 
 
 @dp.message_handler(is_admin=True)
