@@ -26,7 +26,6 @@ class MyFilter(BoundFilter):
 
 
 dp.filters_factory.bind(MyFilter)
-
 """Бот спрашивает, к какому типу относится вопрос"""
 
 
@@ -53,6 +52,8 @@ async def conv_start(message: types.Message):
 @dp.message_handler(state=Questions.typeQ)
 async def conv_start(message: types.Message):
     theme = message.text
+    global is_active
+    is_active = True
 
     await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
     global user_id
@@ -65,28 +66,35 @@ async def conv_start(message: types.Message):
     await Questions.start.set()
 
 
-"""Юзер задает вопрос коучу"""
+"""Юзер задает вопрос коучу + остановка бота для юзера"""
 
 
 @dp.message_handler(state=Questions.start)
 async def asking(message: types.Message, state: FSMContext):
     text = message.text
 
-    if text == "Остановить бота":
+    if text == "Остановить диалог":
         await message.answer('Чат удален', reply_markup=menu)
+
+        global is_active
+        is_active = False
         await state.finish()
         return
+    if is_active == True:
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
-
-"""Сообщения от админа, которые бот берет из топика и отправляет юзеру"""
+"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча"""
 
 
 @dp.message_handler(is_admin=True)
-async def answ(message: types.Message):
+async def answ(message: types.Message, state: FSMContext):
     text = message.text
-    await bot.send_message(chat_id=user_id, text=text)
+    if is_active == True:
+        await bot.send_message(chat_id=user_id, text=text)
 
+    else:
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='разговор закончен')
 
-"""Остановка бота"""
+        await state.finish()
+        return
