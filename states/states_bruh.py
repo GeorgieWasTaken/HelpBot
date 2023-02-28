@@ -8,3 +8,4 @@ class Questions(StatesGroup):
     answer = State()
     typeQ = State()
     topictheme = State()
+    closedialogue = State()
