@@ -66,7 +66,7 @@ async def conv_start(message: types.Message):
     await Questions.start.set()
 
 
-"""Юзер задает вопрос коучу"""
+"""Юзер задает вопрос коучу + остановка бота для юзера"""
 
 
 @dp.message_handler(state=Questions.start)
@@ -82,7 +82,7 @@ async def asking(message: types.Message, state: FSMContext):
     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
 
-"""Сообщения от админа, которые бот берет из топика и отправляет юзеру"""
+"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча"""
 
 
 @dp.message_handler(is_admin=True)
@@ -97,4 +97,3 @@ async def answ(message: types.Message, state: FSMContext):
         return
 
 
-"""Остановка бота"""
