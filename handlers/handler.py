@@ -1,4 +1,4 @@
-# мяу
+#мяу
 import aiogram
 import logging
 from aiogram import types
@@ -70,14 +70,14 @@ async def conv_start(message: types.Message):
 
 @dp.message_handler(state=Questions.start)
 async def asking(message: types.Message, state: FSMContext):
-    text = message.text
+     text = message.text
 
-    if text == "Остановить бота":
-        await message.answer('Чат удален', reply_markup=menu)
-        await state.finish()
-        return
+     if text == "Остановить бота":
+         await message.answer('Разговор закончен', reply_markup=menu)
+         await state.finish()
+         return
 
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
+     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
 
 """Сообщения от админа, которые бот берет из топика и отправляет юзеру"""
@@ -89,4 +89,14 @@ async def answ(message: types.Message):
     await bot.send_message(chat_id=user_id, text=text)
 
 
-"""Остановка бота"""
+# """Остановка бота"""
+#
+#
+# @dp.message_handler(Text(equals=["Остановить бота"]))
+# async def stopping(message: types.Message):
+#     await message.answer('Чат удален', reply_markup=menu)
+
+
+
+
+
