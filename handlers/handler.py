@@ -75,8 +75,9 @@ async def asking(message: types.Message, state: FSMContext):
 
     if text == "Остановить бота":
         await message.answer('Чат удален', reply_markup=menu)
-        await state.finish()
-        return
+        await Questions.closedialogue.set()
+        # await state.finish()
+        # return
 
     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
@@ -85,9 +86,15 @@ async def asking(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(is_admin=True)
-async def answ(message: types.Message):
+async def answ(message: types.Message, state: FSMContext):
     text = message.text
-    await bot.send_message(chat_id=user_id, text=text)
+    if not(state == Questions.closedialogue):
+        await bot.send_message(chat_id=user_id, text=text)
+
+    else:
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='разговор закончен')
+        await state.finish()
+        return
 
 
 """Остановка бота"""
