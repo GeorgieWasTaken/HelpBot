@@ -85,7 +85,7 @@ async def asking(message: types.Message, state: FSMContext):
 
 
 """Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча"""
-
+#Федос, я проверяю как эта хуйня работает
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
