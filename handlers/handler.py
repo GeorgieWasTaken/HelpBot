@@ -94,7 +94,7 @@ async def answ(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id=user_id, text=text)
 
     else:
-        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='разговор закончен')
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
 
         await state.finish()
         return
