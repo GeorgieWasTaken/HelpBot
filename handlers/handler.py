@@ -81,7 +81,7 @@ async def asking(message: types.Message, state: FSMContext):
 
         # вопрос юле
         # await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic)
-
+        #проверка
 
         global is_active
         is_active = False
@@ -91,9 +91,6 @@ async def asking(message: types.Message, state: FSMContext):
     if is_active:
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
-
-"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча"""
-#Федос, я проверяю как эта хуйня работает
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
