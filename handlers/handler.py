@@ -75,6 +75,7 @@ async def asking(message: types.Message, state: FSMContext):
 
     if text == "Остановить диалог":
         await message.answer('Чат удален', reply_markup=menu)
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
 
         global is_active
         is_active = False
