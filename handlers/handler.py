@@ -10,6 +10,7 @@ from keyboards import answer_on_menu, menu, stop_the_bot
 from aiogram.types import ReplyKeyboardRemove
 from config import dp
 
+
 """Фильтр на сообщения от админа"""
 from aiogram.dispatcher.filters import BoundFilter
 
@@ -75,16 +76,20 @@ async def asking(message: types.Message, state: FSMContext):
 
     if text == "Остановить диалог":
         await message.answer('Чат удален', reply_markup=menu)
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
+
+
+        # вопрос юле
+        # await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic)
+        #проверка
 
         global is_active
         is_active = False
         await state.finish()
+
         return
-    if is_active == True:
+    if is_active:
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
-
-
-"""Сообщения от админа, которые бот берет из топика и отправляет юзеру + остановка бота для коуча ыыы"""
 
 
 @dp.message_handler(is_admin=True)
@@ -94,7 +99,7 @@ async def answ(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id=user_id, text=text)
 
     else:
-        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='разговор закончен')
+        # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
 
         await state.finish()
         return
