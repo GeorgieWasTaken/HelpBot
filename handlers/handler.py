@@ -81,7 +81,7 @@ async def asking(message: types.Message, state: FSMContext):
 
         # вопрос юле
         # await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic)
-        #проверка
+
 
         global is_active
         is_active = False
