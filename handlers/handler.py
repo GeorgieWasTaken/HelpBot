@@ -92,12 +92,40 @@ async def asking(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
 
 
+
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
     text = message.text
+    print("Ye")
     if is_active == True:
         await bot.send_message(chat_id=user_id, text=text)
 
+    else:
+        # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
+
+        await state.finish()
+        return
+
+@dp.message_handler(content_types=['photo','video','video_note','voice'])
+async def nudes(message: types.Message, state: FSMContext):
+    if is_active == True:
+        if message.photo:
+                photo= message.photo[0].file_id
+                await bot.send_photo(chat_id=user_id, photo=photo)
+
+
+
+        if message.video:
+            video = message.video.file_id
+            await bot.send_video(chat_id=user_id, video=video)
+
+        if message.video_note:
+            video_note = message.video_note.file_id
+            await bot.send_video_note(chat_id=user_id, video_note=video_note)
+
+        if message.voice:
+            voice = message.voice.file_id
+            await bot.send_voice(chat_id=user_id, voice=voice)
     else:
         # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
 
