@@ -1,11 +1,12 @@
 # мяу
+import asyncio
 import aiogram
 import logging
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from states import Questions
 from aiogram.dispatcher.filters import Text
-from config import dp, bot, admin_id
+from config import dp, db, bot, admin_id
 from keyboards import answer_on_menu, menu, stop_the_bot
 from aiogram.types import ReplyKeyboardRemove
 from config import dp
@@ -41,11 +42,11 @@ async def conv_start(message: types.Message):
 
 @dp.message_handler(state=Questions.topictheme)
 async def conv_start(message: types.Message):
-    global typeQ
+    global question_type
     if message.text == "Личный":
-        typeQ = "Личный"
+        question_type = "Личный"
     else:
-        typeQ = "Общий"
+        question_type = "Общий"
     await message.answer("Какова тема?", reply_markup=ReplyKeyboardRemove())
     await Questions.typeQ.set()
 
@@ -55,14 +56,19 @@ async def conv_start(message: types.Message):
     theme = message.text
     global is_active
     is_active = True
-
     await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
-    global user_id
-    user_id = message.from_user.id
-    global topic
-    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot', name=f"Тип вопроса-{typeQ}: {theme}")
-    topic = Forum_topic.message_thread_id
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic,
+    telegram_id = message.from_user.id
+    Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot',
+                                               name=f"Тип вопроса-{question_type}: {theme}")
+    topic_id = Forum_topic.message_thread_id
+    await db.add_topic(
+        topic_id=topic_id,
+        telegram_id=telegram_id,
+        question_type=question_type,
+        theme=theme
+    )
+
+    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id,
                            text="Сейчас будет задан анонимный вопрос")
     await Questions.start.set()
 
@@ -73,12 +79,15 @@ async def conv_start(message: types.Message):
 @dp.message_handler(state=Questions.start)
 async def asking(message: types.Message, state: FSMContext):
     text = message.text
-
+    topic_id=await db.select_topic_id(telegram_id=message.from_user.id)
+    print(topic_id)
+    topic_id=topic_id.get('topic_id')
     if text == "Остановить диалог":
         await message.answer('Чат удален', reply_markup=menu)
-        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
-
-
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id, text='Диалог остановлен')
+        """ВНИМАТЕЛЬНО, ВОТ ТУТ ЧАТ УДАЛЯЕТСЯ"""
+        await db.delete_topic(topic_id=topic_id)
+        await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id)
         # вопрос юле
         # await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic)
 
@@ -89,16 +98,19 @@ async def asking(message: types.Message, state: FSMContext):
 
         return
     if is_active:
-        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text=text)
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id, text=text)
 
 
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
-    text = message.text
-    print("Ye")
     if is_active == True:
-        await bot.send_message(chat_id=user_id, text=text)
+        text = message.text
+        topic_id=message.message_thread_id
+        telegram_id=await db.select_user_id(topic_id=topic_id)
+        telegram_id=telegram_id.get('telegram_id')
+
+        await bot.send_message(chat_id=telegram_id, text=text)
 
     else:
         # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
@@ -108,24 +120,27 @@ async def answ(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['photo','video','video_note','voice'])
 async def nudes(message: types.Message, state: FSMContext):
+    topic_id = message.message_thread_id
+    telegram_id = await db.select_user_id(topic_id=topic_id)
+    telegram_id = telegram_id.get('telegram_id')
     if is_active == True:
         if message.photo:
                 photo= message.photo[0].file_id
-                await bot.send_photo(chat_id=user_id, photo=photo)
+                await bot.send_photo(chat_id=telegram_id, photo=photo)
 
 
 
         if message.video:
             video = message.video.file_id
-            await bot.send_video(chat_id=user_id, video=video)
+            await bot.send_video(chat_id=telegram_id, video=video)
 
         if message.video_note:
             video_note = message.video_note.file_id
-            await bot.send_video_note(chat_id=user_id, video_note=video_note)
+            await bot.send_video_note(chat_id=telegram_id, video_note=video_note)
 
         if message.voice:
             voice = message.voice.file_id
-            await bot.send_voice(chat_id=user_id, voice=voice)
+            await bot.send_voice(chat_id=telegram_id, voice=voice)
     else:
         # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
 
