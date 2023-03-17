@@ -1,3 +1,4 @@
+import aiogram
 import asyncio
 import logging
 from config import dp,db, bot, admin_id
