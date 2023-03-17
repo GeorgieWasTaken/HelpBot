@@ -60,7 +60,7 @@ answer_on_kouch_menu = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="Личный вопрос"),
-            KeyboardButton(text="Вопрос всем"),
+            KeyboardButton(text="Вопрос для всех"),
         ],
 
     ],
