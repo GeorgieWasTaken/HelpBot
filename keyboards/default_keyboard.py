@@ -43,3 +43,51 @@ stop_the_bot = ReplyKeyboardMarkup(
     resize_keyboard=True
 
 )
+
+
+# Кнопки для главного меню коуча
+kouch_menu = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Задать вопрос персоналу"),
+        ],
+
+    ],
+    resize_keyboard=True, selective=True
+)
+
+# Кнопки для выбора типа вопроса для коуча
+answer_on_kouch_menu = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Личный вопрос сотруднику"),
+            KeyboardButton(text="Вопрос для всех"),
+        ],
+
+    ],
+    resize_keyboard=True, selective=True
+)
+
+# Кнопки для создания вопроса для всех
+question_for_all = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Создать оповещение"),
+            KeyboardButton(text="Создать тест"),
+        ],
+
+    ],
+    resize_keyboard=True, selective=True
+)
+
+# Кнопки для создания личного вопроса
+question_for_one = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Задать личный вопрос"),
+            KeyboardButton(text="Создать тест"),
+        ],
+
+    ],
+    resize_keyboard=True, selective=True
+)

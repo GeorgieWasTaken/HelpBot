@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
-from keyboards import menu
+from keyboards import menu,kouch_menu
 from config import dp,db, bot, admin_id
 import asyncpg.exceptions
 """кнопка старт"""
@@ -17,5 +17,8 @@ async def start(message: types.Message, state: FSMContext):
     except asyncpg.exceptions.UniqueViolationError:
         user = await db.select_user(telegram_id=message.from_user.id)
 
+    if message.from_user.id==339925580:
+        await message.answer(f"Админка, {message.from_user.username}", reply_markup=kouch_menu)
 
-    await message.answer(f"Привет, {message.from_user.username}", reply_markup=menu)
+    else:
+        await message.answer(f"Привет, {message.from_user.username}", reply_markup=menu)

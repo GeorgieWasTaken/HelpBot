@@ -7,7 +7,7 @@ from aiogram.dispatcher import FSMContext
 from states import Questions
 from aiogram.dispatcher.filters import Text
 from config import dp, db, bot, admin_id
-from keyboards import answer_on_menu, menu, stop_the_bot
+from keyboards import answer_on_menu, menu, stop_the_bot, kouch_menu, answer_on_kouch_menu, question_for_all, question_for_one
 from aiogram.types import ReplyKeyboardRemove
 from config import dp
 
@@ -54,8 +54,6 @@ async def conv_start(message: types.Message):
 @dp.message_handler(state=Questions.typeQ)
 async def conv_start(message: types.Message):
     theme = message.text
-    global is_active
-    is_active = True
     await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
     telegram_id = message.from_user.id
     Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot',
@@ -65,7 +63,8 @@ async def conv_start(message: types.Message):
         topic_id=topic_id,
         telegram_id=telegram_id,
         question_type=question_type,
-        theme=theme
+        theme=theme,
+        is_active=True
     )
 
     await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id,
@@ -79,51 +78,56 @@ async def conv_start(message: types.Message):
 @dp.message_handler(state=Questions.start)
 async def asking(message: types.Message, state: FSMContext):
     text = message.text
-    topic_id=await db.select_topic_id(telegram_id=message.from_user.id)
+
+    topic_id=await db.select_topic_id(telegram_id=message.from_user.id, is_active=True)
     print(topic_id)
     topic_id=topic_id.get('topic_id')
     if text == "Остановить диалог":
         await message.answer('Чат удален', reply_markup=menu)
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id, text='Диалог остановлен')
-        """ВНИМАТЕЛЬНО, ВОТ ТУТ ЧАТ УДАЛЯЕТСЯ"""
-        await db.delete_topic(topic_id=topic_id)
-        await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id)
+
         # вопрос юле
         # await bot.delete_forum_topic(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic)
 
 
-        global is_active
-        is_active = False
+        await db.update_is_active(is_active=False,topic_id=topic_id)
         await state.finish()
 
         return
-    if is_active:
+    is_active = await db.select_is_active(topic_id=topic_id)
+    if is_active.get('is_active')==True:
+
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id, text=text)
 
 
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
-    if is_active == True:
-        text = message.text
-        topic_id=message.message_thread_id
+    text = message.text
+    topic_id = message.message_thread_id
+    is_active = await db.select_is_active(topic_id=topic_id)
+    if is_active.get('is_active') == True:
+
         telegram_id=await db.select_user_id(topic_id=topic_id)
         telegram_id=telegram_id.get('telegram_id')
 
         await bot.send_message(chat_id=telegram_id, text=text)
 
-    else:
-        # await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic, text='Диалог остановлен')
+    elif text == 'Задать вопрос персоналу':
+                await message.answer("Выберите тип вопроса", reply_markup=answer_on_kouch_menu)
+    elif text == 'Личный вопрос сотруднику':
+                await message.reply("Выберите действие", reply_markup=question_for_one)
+    elif text == 'Вопрос для всех':
+                await message.reply("Выберите действие", reply_markup=question_for_all)
 
-        await state.finish()
-        return
 
 @dp.message_handler(content_types=['photo','video','video_note','voice'])
 async def nudes(message: types.Message, state: FSMContext):
     topic_id = message.message_thread_id
     telegram_id = await db.select_user_id(topic_id=topic_id)
     telegram_id = telegram_id.get('telegram_id')
-    if is_active == True:
+    is_active = await db.select_is_active(topic_id=topic_id)
+    if is_active.get('is_active') == True:
         if message.photo:
                 photo= message.photo[0].file_id
                 await bot.send_photo(chat_id=telegram_id, photo=photo)

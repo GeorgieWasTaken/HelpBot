@@ -71,7 +71,8 @@ class Database:
         topic_id BIGINT NOT NULL,
         telegram_id BIGINT NOT NULL,
         question_type VARCHAR(255) NULL,
-        theme VARCHAR(255) NULL
+        theme VARCHAR(255) NULL,
+        is_active BOOLEAN NOT NULL
         );
         """
 
@@ -93,9 +94,9 @@ class Database:
         return await self.execute(sql,telegram_id,full_name, fetchrow=True)
 
     #добавление нового топика
-    async def add_topic(self,topic_id,telegram_id,question_type, theme):
-        sql = "INSERT INTO Topics (topic_id, telegram_id, question_type, theme) VALUES($1,$2,$3,$4)"
-        return await self.execute(sql, topic_id, telegram_id, question_type, theme, fetchrow=True)
+    async def add_topic(self,topic_id,telegram_id,question_type, theme, is_active):
+        sql = "INSERT INTO Topics (topic_id, telegram_id, question_type, theme, is_active) VALUES($1,$2,$3,$4,$5)"
+        return await self.execute(sql, topic_id, telegram_id, question_type, theme, is_active, fetchrow=True)
 
     # получение айди нового топика
     async def select_topic_id(self, **kwargs):
@@ -110,10 +111,19 @@ class Database:
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetchrow=True)
 
+    async def select_is_active(self, **kwargs):
+        sql = "SELECT is_active FROM Topics WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetchrow=True)
+
     #добавление или обновление ФИО юзера
     async def update_fullname(self,fullname,telegram_id ):
         sql="UPDATE Users SET fullname=$1 WHERE telegram_id=$2"
         return await self.execute(sql,fullname,telegram_id)
+
+    async def update_is_active(self,is_active,topic_id):
+        sql="UPDATE Topics SET is_active=$1 WHERE topic_id=$2"
+        return await self.execute(sql,is_active,topic_id, execute=True)
 
     #выгрузка всех данных юзера
     async def select_all_users(self):
