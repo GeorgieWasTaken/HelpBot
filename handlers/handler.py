@@ -1,4 +1,4 @@
-# мяу
+
 import asyncio
 import aiogram
 import logging
