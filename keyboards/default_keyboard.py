@@ -44,7 +44,6 @@ stop_the_bot = ReplyKeyboardMarkup(
 
 )
 
-
 # Кнопки для главного меню коуча
 kouch_menu = ReplyKeyboardMarkup(
     keyboard=[

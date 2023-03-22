@@ -43,10 +43,7 @@ async def conv_start(message: types.Message):
 @dp.message_handler(state=Questions.topictheme)
 async def conv_start(message: types.Message):
     global question_type
-    if message.text == "Личный":
-        question_type = "Личный"
-    else:
-        question_type = "Общий"
+    question_type=message.text
     await message.answer("Какова тема?", reply_markup=ReplyKeyboardRemove())
     await Questions.typeQ.set()
 
@@ -57,7 +54,10 @@ async def conv_start(message: types.Message):
     await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
     telegram_id = message.from_user.id
     Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot',
-                                               name=f"Тип вопроса-{question_type}: {theme}")
+                                               name=f"Тип вопроса-{question_type}: {theme}",icon_custom_emoji_id="5370870893004203704")
+    stickers = await bot.get_forum_topic_icon_stickers()
+    print(stickers)
+
     topic_id = Forum_topic.message_thread_id
     await db.add_topic(
         topic_id=topic_id,
@@ -105,20 +105,25 @@ async def asking(message: types.Message, state: FSMContext):
 async def answ(message: types.Message, state: FSMContext):
     text = message.text
     topic_id = message.message_thread_id
-    is_active = await db.select_is_active(topic_id=topic_id)
-    if is_active.get('is_active') == True:
-
-        telegram_id=await db.select_user_id(topic_id=topic_id)
-        telegram_id=telegram_id.get('telegram_id')
-
-        await bot.send_message(chat_id=telegram_id, text=text)
-
-    elif text == 'Задать вопрос персоналу':
-                await message.answer("Выберите тип вопроса", reply_markup=answer_on_kouch_menu)
+    print(topic_id)
+    if text == 'Задать вопрос персоналу':
+        await message.reply("Выберите тип вопроса", reply_markup=answer_on_kouch_menu)
     elif text == 'Личный вопрос сотруднику':
-                await message.reply("Выберите действие", reply_markup=question_for_one)
+        await message.reply("Выберите действие", reply_markup=question_for_one)
     elif text == 'Вопрос для всех':
-                await message.reply("Выберите действие", reply_markup=question_for_all)
+        await message.reply("Выберите действие", reply_markup=question_for_all)
+    elif text == '1234ЮЛЯ':
+        await message.reply("Здравствуйте, Юлия", reply_markup=kouch_menu)
+    else:
+
+        is_active = await db.select_is_active(topic_id=topic_id)
+        if is_active.get('is_active') == True:
+
+            telegram_id=await db.select_user_id(topic_id=topic_id)
+            telegram_id=telegram_id.get('telegram_id')
+
+            await bot.send_message(chat_id=telegram_id, text=text)
+
 
 
 @dp.message_handler(content_types=['photo','video','video_note','voice'])
@@ -134,15 +139,15 @@ async def nudes(message: types.Message, state: FSMContext):
 
 
 
-        if message.video:
+        elif message.video:
             video = message.video.file_id
             await bot.send_video(chat_id=telegram_id, video=video)
 
-        if message.video_note:
+        elif message.video_note:
             video_note = message.video_note.file_id
             await bot.send_video_note(chat_id=telegram_id, video_note=video_note)
 
-        if message.voice:
+        elif message.voice:
             voice = message.voice.file_id
             await bot.send_voice(chat_id=telegram_id, voice=voice)
     else:
