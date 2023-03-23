@@ -13,6 +13,8 @@ from config import dp
 from aiogram.utils.callback_data import CallbackData
 from keyboards.callback_datas import km_callback
 
+global smile
+smile={'Личный':"5370870893004203704",'Общий':"5418115271267197333"}
 
 """Фильтр на сообщения от админа"""
 from aiogram.dispatcher.filters import BoundFilter
@@ -56,7 +58,7 @@ async def conv_start(message: types.Message):
     await message.answer("Создан чат с коучем. Задавайте вопрос", reply_markup=stop_the_bot)
     telegram_id = message.from_user.id
     Forum_topic = await bot.create_forum_topic(chat_id='@helpbot_bot_bot_bot',
-                                               name=f"Тип вопроса-{question_type}: {theme}",icon_custom_emoji_id="5370870893004203704")
+                                               name=f"Тип вопроса-{question_type}: {theme}",icon_custom_emoji_id=smile[question_type])
     stickers = await bot.get_forum_topic_icon_stickers()
     print(stickers)
 
