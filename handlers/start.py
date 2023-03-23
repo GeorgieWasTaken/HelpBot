@@ -17,8 +17,8 @@ async def start(message: types.Message, state: FSMContext):
     except asyncpg.exceptions.UniqueViolationError:
         user = await db.select_user(telegram_id=message.from_user.id)
 
-    if message.from_user.id==339925580:
-        await message.answer(f"Админка, {message.from_user.username}", reply_markup=kouch_menu)
+    #if message.from_user.id==339925580:
+        #await message.answer(f"Админка, {message.from_user.username}", reply_markup=kouch_menu)
 
-    else:
+   # else:
         await message.answer(f"Привет, {message.from_user.username}", reply_markup=menu)
