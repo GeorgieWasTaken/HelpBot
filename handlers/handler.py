@@ -8,8 +8,10 @@ from states import Questions
 from aiogram.dispatcher.filters import Text
 from config import dp, db, bot, admin_id
 from keyboards import answer_on_menu, menu, stop_the_bot, kouch_menu, answer_on_kouch_menu, question_for_all, question_for_one
-from aiogram.types import ReplyKeyboardRemove
+from aiogram.types import ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from config import dp
+from aiogram.utils.callback_data import CallbackData
+from keyboards.callback_datas import km_callback
 
 
 """Фильтр на сообщения от админа"""
@@ -100,20 +102,35 @@ async def asking(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id, text=text)
 
 
+@dp.callback_query_handler(text_contains='km')
+
+async  def next_menu(call: CallbackQuery):
+
+    callback_data=call.data
+    logging.info=(f"call = {callback_data}")
+    if callback_data=='km:1':
+        await call.message.reply('Выберите тип ворпоса', reply_markup=answer_on_kouch_menu)
+    elif callback_data == 'km:2':
+        await call.message.reply('Выберите действие', reply_markup=question_for_one)
+    elif callback_data == 'km:3':
+        await call.message.reply('Выберите действие', reply_markup=question_for_all)
+    elif callback_data == 'km:4':
+        await call.message.reply('Процедура создания оповещений пока не готова, приносим свои извенения')
+    elif callback_data == 'km:5':
+        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извенения')
+    elif callback_data == 'km:6':
+        await call.message.reply('Процедура создания вопросов со стороны коуча пока не готова, приносим свои извенения')
+    elif callback_data == 'km:7':
+        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извенения')
+
+
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
     text = message.text
     topic_id = message.message_thread_id
-    print(topic_id)
-    if text == 'Задать вопрос персоналу':
-        await message.reply("Выберите тип вопроса", reply_markup=answer_on_kouch_menu)
-    elif text == 'Личный вопрос сотруднику':
-        await message.reply("Выберите действие", reply_markup=question_for_one)
-    elif text == 'Вопрос для всех':
-        await message.reply("Выберите действие", reply_markup=question_for_all)
-    elif text == '1234ЮЛЯ':
-        await message.reply("Здравствуйте, Юлия", reply_markup=kouch_menu)
+    if text == '1234ЮЛЯ':
+        await message.answer("Здравствуйте, Юлия", reply_markup=kouch_menu)
     else:
 
         is_active = await db.select_is_active(topic_id=topic_id)

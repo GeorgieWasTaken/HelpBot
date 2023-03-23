@@ -1,4 +1,7 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove, \
+    KeyboardButton
+
+from keyboards.callback_datas import km_callback
 
 # Кнопки для главного меню
 menu = ReplyKeyboardMarkup(
@@ -45,48 +48,45 @@ stop_the_bot = ReplyKeyboardMarkup(
 )
 
 # Кнопки для главного меню коуча
-kouch_menu = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Задать вопрос персоналу"),
-        ],
 
-    ],
-    resize_keyboard=True, selective=True
+kouch_menu = InlineKeyboardMarkup(
+        inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Задать вопрос персоналу", callback_data=km_callback.new(number_of_menu='1'))
+        ],
+    ]
 )
 
 # Кнопки для выбора типа вопроса для коуча
-answer_on_kouch_menu = ReplyKeyboardMarkup(
-    keyboard=[
+answer_on_kouch_menu=InlineKeyboardMarkup(
+    row_width=2,
+    inline_keyboard=[
         [
-            KeyboardButton(text="Личный вопрос сотруднику"),
-            KeyboardButton(text="Вопрос для всех"),
+            InlineKeyboardButton(text="Личный вопрос сотруднику", callback_data=km_callback.new(number_of_menu='2')),
+            InlineKeyboardButton(text="Вопрос для всех", callback_data=km_callback.new(number_of_menu='3'))
         ],
-
-    ],
-    resize_keyboard=True, selective=True
+    ]
 )
 
 # Кнопки для создания вопроса для всех
-question_for_all = ReplyKeyboardMarkup(
-    keyboard=[
+question_for_all = InlineKeyboardMarkup(
+    row_width=2,
+    inline_keyboard=[
         [
-            KeyboardButton(text="Создать оповещение"),
-            KeyboardButton(text="Создать тест"),
+            InlineKeyboardButton(text="Создать оповещение",callback_data=km_callback.new(number_of_menu='4')),
+            InlineKeyboardButton(text="Создать тест", callback_data=km_callback.new(number_of_menu='5'))
         ],
-
-    ],
-    resize_keyboard=True, selective=True
+    ]
 )
 
-# Кнопки для создания личного вопроса
-question_for_one = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Задать личный вопрос"),
-            KeyboardButton(text="Создать тест"),
-        ],
 
-    ],
-    resize_keyboard=True, selective=True
+# Кнопки для создания личного вопроса
+question_for_one = InlineKeyboardMarkup(
+    row_width=2,
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Задать личный вопрос", callback_data=km_callback.new(number_of_menu='6')),
+            InlineKeyboardButton(text="Создать тест", callback_data=km_callback.new(number_of_menu='7'))
+        ],
+    ]
 )
