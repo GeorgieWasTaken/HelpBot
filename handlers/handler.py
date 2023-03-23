@@ -1,4 +1,4 @@
-
+# мяу
 import asyncio
 import aiogram
 import logging
@@ -48,8 +48,11 @@ async def conv_start(message: types.Message):
 async def conv_start(message: types.Message):
     global question_type
     question_type=message.text
-    await message.answer("Какова тема?", reply_markup=ReplyKeyboardRemove())
-    await Questions.typeQ.set()
+    if question_type=='Личный' or question_type=='Общий':
+        await message.answer("Какова тема?", reply_markup=ReplyKeyboardRemove())
+        await Questions.typeQ.set()
+    else:
+        await message.answer("Вы ввели несуществующий тип вопроса, введите заново",)
 
 
 @dp.message_handler(state=Questions.typeQ)
@@ -70,9 +73,12 @@ async def conv_start(message: types.Message):
         theme=theme,
         is_active=True
     )
-
-    await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id,
-                           text="Сейчас будет задан анонимный вопрос")
+    if question_type=="Личный":
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id,
+                                text="Сейчас будет задан анонимный вопрос")
+    else:
+        await bot.send_message(chat_id='@helpbot_bot_bot_bot', message_thread_id=topic_id,
+                               text=f"Сейчас будет задан вопрос от {message.from_user.username}")
     await Questions.start.set()
 
 
@@ -142,7 +148,6 @@ async def answ(message: types.Message, state: FSMContext):
             telegram_id=telegram_id.get('telegram_id')
 
             await bot.send_message(chat_id=telegram_id, text=text)
-
 
 
 @dp.message_handler(content_types=['photo','video','video_note','voice'])
