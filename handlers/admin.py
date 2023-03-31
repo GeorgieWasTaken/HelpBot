@@ -4,6 +4,7 @@ import logging
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from config import db, bot
+from states import Admin
 from keyboards import kouch_menu, answer_on_kouch_menu, question_for_all, \
     question_for_one
 from aiogram.types import CallbackQuery
@@ -26,36 +27,6 @@ class MyFilter(BoundFilter):
 
 
 dp.filters_factory.bind(MyFilter)
-
-@dp.callback_query_handler(text_contains='km')
-async def next_menu(call: CallbackQuery):
-    callback_data = call.data
-    logging.info = (f"call = {callback_data}")
-    if callback_data == 'km:1':
-        await call.message.reply('Выберите тип ворпоса', reply_markup=answer_on_kouch_menu)
-    elif callback_data == 'km:2':
-        await call.message.reply('Выберите действие', reply_markup=question_for_one)
-    elif callback_data == 'km:3':
-        await call.message.reply('Выберите действие', reply_markup=question_for_all)
-    elif callback_data == 'km:4':
-        count=await db.count_users()
-        for i in range(count):
-            telegram_id=await db.select_user(id=i+1)
-            telegram_id = telegram_id.get('telegram_id')
-            print(telegram_id)
-            await bot.send_message(chat_id=telegram_id,text="Оповещение всем")
-
-
-
-
-
-    elif callback_data == 'km:5':
-        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
-    elif callback_data == 'km:6':
-        await call.message.reply('Процедура создания вопросов со стороны коуча пока не готова, приносим свои извинения')
-    elif callback_data == 'km:7':
-        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
-
 
 @dp.message_handler(is_admin=True)
 async def answ(message: types.Message, state: FSMContext):
@@ -102,3 +73,47 @@ async def nudes(message: types.Message, state: FSMContext):
 
         await state.finish()
         return
+
+@dp.callback_query_handler(text_contains='km')
+async def next_menu(call: CallbackQuery):
+    callback_data = call.data
+    logging.info = (f"call = {callback_data}")
+    if callback_data == 'km:1':
+        await call.message.reply('Выберите тип ворпоса', reply_markup=answer_on_kouch_menu)
+    elif callback_data == 'km:2':
+        await call.message.reply('Выберите действие', reply_markup=question_for_one)
+    elif callback_data == 'km:3':
+        await call.message.reply('Выберите действие', reply_markup=question_for_all)
+    elif callback_data == 'km:4':
+        await Admin.onlyfans.set()
+        await call.message.answer('Введите текст рассылки')
+    elif callback_data == 'km:5':
+        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
+    elif callback_data == 'km:6':
+        await call.message.reply('Процедура создания вопросов со стороны коуча пока не готова, приносим свои извинения')
+    elif callback_data == 'km:7':
+        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
+
+@dp.message_handler(state=Admin.onlyfans)
+async def rass(message:types.Message, state: FSMContext):
+    text=message.text
+    count = await db.count_users()
+    for i in range(count):
+        telegram_id = await db.select_user(id=i + 1)
+        telegram_id = telegram_id.get('telegram_id')
+        print(telegram_id)
+        await bot.send_message(chat_id=telegram_id, text=f"Общая рассылка!\n{text}")
+        await message.answer('Сообщение отправлено')
+        await state.finish()
+
+@dp.message_handler(state=Admin.onepizda)
+async def rass(message:types.Message, state: FSMContext):
+    text=message.text
+    count = await db.count_users()
+    for i in range(count):
+        telegram_id = await db.select_user(id=i + 1)
+        telegram_id = telegram_id.get('telegram_id')
+        print(telegram_id)
+        await bot.send_message(chat_id=telegram_id, text=f"Общая рассылка!\n{text}")
+        await message.answer('Сообщение отправлено')
+        await state.finish()

@@ -9,3 +9,8 @@ class Questions(StatesGroup):
     typeQ = State()
     topictheme = State()
     closedialogue = State()
+
+class Admin(StatesGroup):
+    onlyfans=State()
+    oprosec=State()
+    onepizda=State()

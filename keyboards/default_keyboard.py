@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove, \
     KeyboardButton
 
-from keyboards.callback_datas import km_callback
+from keyboards.callback_datas import km_callback, us_callback
 
 # Кнопки для главного меню
 menu = ReplyKeyboardMarkup(
@@ -87,6 +87,25 @@ question_for_one = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(text="Задать личный вопрос", callback_data=km_callback.new(number_of_menu='6')),
             InlineKeyboardButton(text="Создать тест", callback_data=km_callback.new(number_of_menu='7'))
+        ],
+    ]
+)
+
+# Кнопки для создания личного вопроса
+onepizda_menu = InlineKeyboardMarkup(
+    row_width=2,
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="1", callback_data=us_callback.new(number_of_user='1')),
+            InlineKeyboardButton(text="2", callback_data=us_callback.new(number_of_user='2')),
+            InlineKeyboardButton(text="3", callback_data=us_callback.new(number_of_user='3')),
+            InlineKeyboardButton(text="4", callback_data=us_callback.new(number_of_user='4')),
+            InlineKeyboardButton(text="5", callback_data=us_callback.new(number_of_user='5')),
+            InlineKeyboardButton(text="6", callback_data=us_callback.new(number_of_user='6')),
+            InlineKeyboardButton(text="7", callback_data=us_callback.new(number_of_user='7')),
+            InlineKeyboardButton(text="8", callback_data=us_callback.new(number_of_user='8')),
+            InlineKeyboardButton(text="9", callback_data=us_callback.new(number_of_user='9')),
+            InlineKeyboardButton(text="10", callback_data=us_callback.new(number_of_user='10'))
         ],
     ]
 )

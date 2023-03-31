@@ -6,3 +6,4 @@ from .default_keyboard import kouch_menu
 from .default_keyboard import answer_on_kouch_menu
 from .default_keyboard import question_for_all
 from .default_keyboard import question_for_one
+from .default_keyboard import onepizda_menu
