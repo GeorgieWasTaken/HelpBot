@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
-from keyboards import menu,kouch_menu
-from config import dp,db, bot, admin_id
+from keyboards import menu
+from config import dp,db
 import asyncpg.exceptions
 """кнопка старт"""
 
@@ -21,4 +21,4 @@ async def start(message: types.Message, state: FSMContext):
         #await message.answer(f"Админка, {message.from_user.username}", reply_markup=kouch_menu)
 
    # else:
-        await message.answer(f"Привет, {message.from_user.username}", reply_markup=menu)
+        await message.answer(f"Привет, {message.from_user.full_name}", reply_markup=menu)

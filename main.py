@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from config import dp,db, bot, admin_id
+from config import dp,db, bot
 from aiogram import types, executor
 from keyboards import menu
 import handlers
