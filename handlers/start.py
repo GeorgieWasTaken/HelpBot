@@ -6,7 +6,7 @@ from config import dp,db
 import asyncpg.exceptions
 """кнопка старт"""
 
-
+#добавление юзера в бд при нажатии команды /start
 @dp.message_handler(Command('start'))
 async def start(message: types.Message, state: FSMContext):
     try:

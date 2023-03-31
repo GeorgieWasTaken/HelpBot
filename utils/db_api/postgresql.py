@@ -1,9 +1,6 @@
-
 import asyncpg
 from asyncpg import Connection
 from asyncpg.pool import Pool
-
-
 import config
 
 #класс для всех функций, связанных с базой данных
@@ -105,12 +102,12 @@ class Database:
         return await self.execute(sql, *parameters, fetchrow=True)
 
     # получение айди юзера
-
     async def select_user_id(self, **kwargs):
         sql = "SELECT telegram_id FROM Topics WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetchrow=True)
 
+    #получение состояния диалога
     async def select_is_active(self, **kwargs):
         sql = "SELECT is_active FROM Topics WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
@@ -121,6 +118,7 @@ class Database:
         sql="UPDATE Users SET fullname=$1 WHERE telegram_id=$2"
         return await self.execute(sql,fullname,telegram_id)
 
+    #изменение состояния диалога
     async def update_is_active(self,is_active,topic_id):
         sql="UPDATE Topics SET is_active=$1 WHERE topic_id=$2"
         return await self.execute(sql,is_active,topic_id, execute=True)
@@ -130,7 +128,7 @@ class Database:
         sql = "SELECT * FROM Users"
         return await self.execute(sql, fetch=True)
 
-    # выгрузка данных одного юзера
+    #выгрузка данных одного юзера
     async def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
@@ -155,6 +153,7 @@ class Database:
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)
 
+    #принт всех действий
 def logger(statement):
     print(f"""
     -----------------------------------------------------------------

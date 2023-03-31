@@ -5,7 +5,7 @@ from aiogram import types, executor
 from keyboards import menu
 import handlers
 
-
+#первая функция, которая запускается при запуске бота
 async def start_up(message=types.Message):
     logging.info("Создаем подключение к базе данных")
     await db.create()
@@ -19,7 +19,7 @@ async def start_up(message=types.Message):
     logging.info("Готово")
     await bot.send_message(chat_id=str(339925580), text="Бот запущен и готов к работе!",reply_markup=menu)
 
-
+#чтобы бот работал вечно!
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, on_startup=start_up)
     asyncio.get_event_loop().run_forever()
