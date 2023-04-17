@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Command
 from keyboards import menu
 from config import dp,db
 import asyncpg.exceptions
-"""кнопка старт"""
+"""кнопка старта"""
 
 #добавление юзера в бд при нажатии команды /start
 @dp.message_handler(Command('start'))
