@@ -21,4 +21,4 @@ async def start(message: types.Message, state: FSMContext):
         #await message.answer(f"Админка, {message.from_user.username}", reply_markup=kouch_menu)
 
    # else:
-        await message.answer(f"Привет, {message.from_user.full_name}", reply_markup=menu)
+    await message.answer(f"Привет, {message.from_user.full_name}", reply_markup=menu)
