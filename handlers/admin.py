@@ -95,7 +95,7 @@ async def next_menu(call: CallbackQuery):
         await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
 
 @dp.message_handler(state=Admin.onlyfans)
-async def rass(message:types.Message, state: FSMContext):
+async def pido(message:types.Message, state: FSMContext):
     text=message.text
     count = await db.count_users()
     for i in range(count):
@@ -107,7 +107,7 @@ async def rass(message:types.Message, state: FSMContext):
         await state.finish()
 
 @dp.message_handler(state=Admin.onepizda)
-async def rass(message:types.Message, state: FSMContext):
+async def ras(message:types.Message, state: FSMContext):
     text=message.text
     count = await db.count_users()
     for i in range(count):
