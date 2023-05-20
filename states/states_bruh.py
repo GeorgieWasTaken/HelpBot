@@ -14,3 +14,9 @@ class Admin(StatesGroup):
     onlyfans=State()
     oprosec=State()
     onepizda=State()
+
+class Tests(StatesGroup):
+    new=State()
+    createq=State()
+    createa=State()
+    otpravit=State()

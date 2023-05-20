@@ -1,10 +1,11 @@
 import asyncio
 import aiogram
 import logging
+import argparse
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from config import db, bot
-from states import Admin
+from states import Admin, Tests
 from keyboards import kouch_menu, answer_on_kouch_menu, question_for_all, \
     question_for_one
 from aiogram.types import CallbackQuery
@@ -37,11 +38,12 @@ async def answ(message: types.Message, state: FSMContext):
     else:
 
         is_active = await db.select_is_active(topic_id=topic_id)
-        if is_active.get('is_active') == True:
-            telegram_id = await db.select_user_id(topic_id=topic_id)
-            telegram_id = telegram_id.get('telegram_id')
+        if is_active is not None:
+            if is_active.get('is_active') == True:
+                telegram_id = await db.select_user_id(topic_id=topic_id)
+                telegram_id = telegram_id.get('telegram_id')
 
-            await bot.send_message(chat_id=telegram_id, text=text)
+                await bot.send_message(chat_id=telegram_id, text=text)
 
 
 @dp.message_handler(content_types=['photo', 'video', 'video_note', 'voice'])
@@ -92,28 +94,68 @@ async def next_menu(call: CallbackQuery):
     elif callback_data == 'km:6':
         await call.message.reply('Процедура создания вопросов со стороны коуча пока не готова, приносим свои извинения')
     elif callback_data == 'km:7':
-        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
+        await call.message.answer('Введите название нового теста')
+        await Tests.new.set()
 
 @dp.message_handler(state=Admin.onlyfans)
 async def pido(message:types.Message, state: FSMContext):
     text=message.text
     count = await db.count_users()
+    print(count)
     for i in range(count):
         telegram_id = await db.select_user(id=i + 1)
-        telegram_id = telegram_id.get('telegram_id')
         print(telegram_id)
+        print(i)
+        telegram_id = telegram_id.get('telegram_id')
+
         await bot.send_message(chat_id=telegram_id, text=f"Общая рассылка!\n{text}")
         await message.answer('Сообщение отправлено')
-        await state.finish()
+    await state.finish()
 
 @dp.message_handler(state=Admin.onepizda)
 async def ras(message:types.Message, state: FSMContext):
     text=message.text
     count = await db.count_users()
     for i in range(count):
-        telegram_id = await db.select_user(id=i + 1)
+        telegram_id = await db.select_user(id=2)
         telegram_id = telegram_id.get('telegram_id')
         print(telegram_id)
         await bot.send_message(chat_id=telegram_id, text=f"Общая рассылка!\n{text}")
         await message.answer('Сообщение отправлено')
+    await state.finish()
+
+@dp.message_handler(state=Tests.new)
+async def newtest(message:types.Message, state: FSMContext):
+    name=message.text
+    n=await db.select_max_test_id()
+    hui=str(n[0])
+    print(hui)
+    if hui.find('None')==hui.find('=')+1:
+        print('ебааааать')
+        m=0
+    else:
+        m=int(hui[hui.find('=')+1:hui.find('>')])
+    print(hui)
+    await db.add_test(m+1,name)
+    await Tests.createq.set()
+
+@dp.message_handler(state=Tests.createq)
+async def creatingq(message:types.Message, state: FSMContext):
+    text=message.text
+    if text=='Остановить создание теста':
         await state.finish()
+    else:
+        n = await db.select_max_test_id()
+        hui = str(n[0])
+        m = int(hui[hui.find('=') + 1:hui.find('>')])
+        await db.add_test(m,text)
+        await Tests.createa.set()
+
+@dp.message_handler(state=Tests.createa)
+async def creatinga(message:types.Message, state: FSMContext):
+    text=message.text
+    n = await db.select_max_id()
+    hui = str(n[0])
+    m = int(hui[hui.find('=') + 1:hui.find('>')])
+    await db.add_a(m,text)
+    await Tests.createq.set()

@@ -16,8 +16,13 @@ async def start_up(message=types.Message):
     logging.info("Создаем таблицу топиков")
     await db.create_table_topics()
 
+    logging.info("Создаем таблицу тестов")
+    await db.create_table_tests()
+
     logging.info("Готово")
     await bot.send_message(chat_id=str(339925580), text="Бот запущен и готов к работе!",reply_markup=menu)
+
+
 
 #чтобы бот работал вечно!
 if __name__ == '__main__':

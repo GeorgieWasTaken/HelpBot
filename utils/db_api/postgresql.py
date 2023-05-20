@@ -75,17 +75,17 @@ class Database:
 
         await self.execute(sql, execute=True)
 
-        # создание таблицы вопросов/ответов к тестам
-        async def create_table_tests(self):
-            sql = """
-            CREATE TABLE IF NOT EXISTS Tests (
-            id SERIAL PRIMARY KEY,
-            test_id BIGINT NOT NULL UNIQUE,
-            questions VARCHAR(255) NULL,
-            answers VARCHAR(255) NULL
-            );
-            """
-            await self.execute(sql, execute=True)
+    # создание таблицы вопросов/ответов к тестам
+    async def create_table_tests(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Tests (
+        id SERIAL PRIMARY KEY,
+        test_id BIGINT NOT NULL,
+        questions VARCHAR(255) NULL,
+        answers VARCHAR(255) NULL
+        );
+        """
+        await self.execute(sql, execute=True)
 
     #аргументы, по которым происходит выгрузка из бд (защита от ошибок и sql-инъекций)
     @staticmethod
@@ -145,8 +145,12 @@ class Database:
         return await self.execute(sql, *parameters, fetchrow=True)
 
     # получение последнего id теста
-    async def select_max_id(self):
+    async def select_max_test_id(self):
         sql = "SELECT MAX(test_id) FROM Tests"
+        return await self.execute(sql, fetch=True)
+
+    async def select_max_id(self):
+        sql = "SELECT MAX(id) FROM Tests"
         return await self.execute(sql, fetch=True)
 
    #посчитать количество юзеров
@@ -167,6 +171,15 @@ class Database:
     #удаление таблицы юзеров
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)
+
+    async def add_test(self, test_id, name):
+        sql = "INSERT INTO Tests (test_id, questions) VALUES($1,$2)"
+        return await self.execute(sql, test_id, name, fetchrow=True)
+
+
+    async def add_a(self, id, answer):
+        sql = "UPDATE Tests SET answers=$2 WHERE id=$1"
+        return await self.execute(sql, id, answer, execute=True)
 
     #принт всех действий
 def logger(statement):
