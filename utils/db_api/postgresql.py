@@ -75,7 +75,17 @@ class Database:
 
         await self.execute(sql, execute=True)
 
-
+        # создание таблицы вопросов/ответов к тестам
+        async def create_table_tests(self):
+            sql = """
+            CREATE TABLE IF NOT EXISTS Tests (
+            id SERIAL PRIMARY KEY,
+            test_id BIGINT NOT NULL UNIQUE,
+            questions VARCHAR(255) NULL,
+            answers VARCHAR(255) NULL
+            );
+            """
+            await self.execute(sql, execute=True)
 
     #аргументы, по которым происходит выгрузка из бд (защита от ошибок и sql-инъекций)
     @staticmethod
@@ -133,6 +143,11 @@ class Database:
         sql = "SELECT * FROM Users WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetchrow=True)
+
+    # получение последнего id теста
+    async def select_max_id(self):
+        sql = "SELECT MAX(test_id) FROM Tests"
+        return await self.execute(sql, fetch=True)
 
    #посчитать количество юзеров
     async def count_users(self):
