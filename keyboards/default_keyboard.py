@@ -47,49 +47,43 @@ stop_the_bot = ReplyKeyboardMarkup(
 
 )
 
+
+stop_create_test = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Закончить создание теста")
+        ],
+    ],
+    resize_keyboard=True
+
+)
 # Кнопки для главного меню коуча
 
-kouch_menu = InlineKeyboardMarkup(
-        inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Задать вопрос персоналу", callback_data=km_callback.new(number_of_menu='1'))
-        ],
-    ]
-)
-
-# Кнопки для выбора типа вопроса для коуча
-answer_on_kouch_menu=InlineKeyboardMarkup(
-    row_width=2,
+kouch_menu=InlineKeyboardMarkup(
+    row_width=1,
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Личный вопрос сотруднику", callback_data=km_callback.new(number_of_menu='2')),
-            InlineKeyboardButton(text="Вопрос для всех", callback_data=km_callback.new(number_of_menu='3'))
-        ],
-    ]
-)
+            InlineKeyboardButton(text="Создать тест для персонала", callback_data=km_callback.new(number_of_menu='2'))
 
-# Кнопки для создания вопроса для всех
-question_for_all = InlineKeyboardMarkup(
-    row_width=2,
-    inline_keyboard=[
+        ],
         [
-            InlineKeyboardButton(text="Создать оповещение",callback_data=km_callback.new(number_of_menu='4')),
-            InlineKeyboardButton(text="Создать тест", callback_data=km_callback.new(number_of_menu='5'))
+            InlineKeyboardButton(text="Отправить тест персоналу", callback_data=km_callback.new(number_of_menu='3'))
         ],
-    ]
-)
-
-
-# Кнопки для создания личного вопроса
-question_for_one = InlineKeyboardMarkup(
-    row_width=2,
-    inline_keyboard=[
         [
-            InlineKeyboardButton(text="Задать личный вопрос", callback_data=km_callback.new(number_of_menu='6')),
-            InlineKeyboardButton(text="Создать тест", callback_data=km_callback.new(number_of_menu='7'))
+            InlineKeyboardButton(text="Создать рассылку для персонала", callback_data=km_callback.new(number_of_menu='4'))
         ],
+        [
+            InlineKeyboardButton(text="Создать диалог с сотрудником", callback_data=km_callback.new(number_of_menu='5'))
+        ],
+        [
+
+            InlineKeyboardButton(text="Просмотреть результаты теста", callback_data=km_callback.new(number_of_menu='6'))
+        ]
+
     ]
 )
+
+
 
 # Кнопки для создания личного вопроса
 onepizda_menu = InlineKeyboardMarkup(
@@ -109,3 +103,4 @@ onepizda_menu = InlineKeyboardMarkup(
         ],
     ]
 )
+

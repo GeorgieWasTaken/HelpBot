@@ -6,8 +6,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from config import db, bot
 from states import Admin, Tests
-from keyboards import kouch_menu, answer_on_kouch_menu, question_for_all, \
-    question_for_one
+from keyboards import kouch_menu, stop_create_test
 from aiogram.types import CallbackQuery
 from config import dp
 #from aiogram.utils.callback_data import CallbackData
@@ -80,22 +79,19 @@ async def nudes(message: types.Message, state: FSMContext):
 async def next_menu(call: CallbackQuery):
     callback_data = call.data
     logging.info = (f"call = {callback_data}")
-    if callback_data == 'km:1':
-        await call.message.reply('Выберите тип ворпоса', reply_markup=answer_on_kouch_menu)
-    elif callback_data == 'km:2':
-        await call.message.reply('Выберите действие', reply_markup=question_for_one)
+    if callback_data == 'km:2':
+        await call.message.answer('Введите название нового теста')
+        await Tests.new.set()
     elif callback_data == 'km:3':
-        await call.message.reply('Выберите действие', reply_markup=question_for_all)
+        await call.message.reply('Процедура просмотра результатов тестов пока что не работает')
     elif callback_data == 'km:4':
         await Admin.onlyfans.set()
         await call.message.answer('Введите текст рассылки')
     elif callback_data == 'km:5':
-        await call.message.reply('Процедура создания тестов пока не готова, приносим свои извинения')
+        await call.message.reply('Процедура создания личных диалогов пока не работает')
     elif callback_data == 'km:6':
-        await call.message.reply('Процедура создания вопросов со стороны коуча пока не готова, приносим свои извинения')
-    elif callback_data == 'km:7':
-        await call.message.answer('Введите название нового теста')
-        await Tests.new.set()
+        await call.message.answer('Процедура отправления тестов пока не работает')
+
 
 @dp.message_handler(state=Admin.onlyfans)
 async def pido(message:types.Message, state: FSMContext):
@@ -129,33 +125,37 @@ async def newtest(message:types.Message, state: FSMContext):
     name=message.text
     n=await db.select_max_test_id()
     hui=str(n[0])
-    print(hui)
     if hui.find('None')==hui.find('=')+1:
-        print('ебааааать')
         m=0
     else:
         m=int(hui[hui.find('=')+1:hui.find('>')])
-    print(hui)
     await db.add_test(m+1,name)
+    await message.answer('Введите вопрос', reply_markup=stop_create_test)
     await Tests.createq.set()
 
 @dp.message_handler(state=Tests.createq)
 async def creatingq(message:types.Message, state: FSMContext):
     text=message.text
-    if text=='Остановить создание теста':
+    if text=='Закончить создание теста':
+        await message.answer('Тест успешно создан', reply_markup=types.ReplyKeyboardRemove())
         await state.finish()
     else:
         n = await db.select_max_test_id()
         hui = str(n[0])
         m = int(hui[hui.find('=') + 1:hui.find('>')])
         await db.add_test(m,text)
+        await message.answer('Введите ответ на вопрос', reply_markup=types.ReplyKeyboardRemove())
         await Tests.createa.set()
 
 @dp.message_handler(state=Tests.createa)
 async def creatinga(message:types.Message, state: FSMContext):
     text=message.text
-    n = await db.select_max_id()
-    hui = str(n[0])
-    m = int(hui[hui.find('=') + 1:hui.find('>')])
-    await db.add_a(m,text)
-    await Tests.createq.set()
+    if text=='Закончить создание теста':
+        await message.answer('Введите ответ на вопрос, чтобы закончить создание теста')
+    else:
+        n = await db.select_max_id()
+        hui = str(n[0])
+        m = int(hui[hui.find('=') + 1:hui.find('>')])
+        await db.add_a(m,text)
+        await message.answer('Введите вопрос', reply_markup=stop_create_test)
+        await Tests.createq.set()
