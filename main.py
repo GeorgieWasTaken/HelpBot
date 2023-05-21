@@ -20,7 +20,7 @@ async def start_up(message=types.Message):
     await db.create_table_tests()
 
     logging.info("Готово")
-    await bot.send_message(chat_id=str(339925580), text="Бот запущен и готов к работе!",reply_markup=menu)
+    await bot.send_message(chat_id=str(339925580), text="А ты знаешь, где можно попить кофе?",reply_markup=menu)
 
 
 

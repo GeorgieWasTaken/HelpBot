@@ -48,13 +48,12 @@ stop_the_bot = ReplyKeyboardMarkup(
 )
 
 
-stop_create_test = ReplyKeyboardMarkup(
-    keyboard=[
+stop_create_test = InlineKeyboardMarkup(
+    inline_keyboard=[
         [
-            KeyboardButton(text="Закончить создание теста")
-        ],
-    ],
-    resize_keyboard=True
+            KeyboardButton(text="Закончить создание теста", callback_data=km_callback.new(number_of_menu='7'))
+        ]
+    ]
 
 )
 # Кнопки для главного меню коуча
@@ -78,7 +77,7 @@ kouch_menu=InlineKeyboardMarkup(
         [
 
             InlineKeyboardButton(text="Просмотреть результаты теста", callback_data=km_callback.new(number_of_menu='6'))
-        ]
+        ],
 
     ]
 )

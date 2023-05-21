@@ -93,6 +93,8 @@ async def next_menu(call: CallbackQuery):
         await call.message.answer('Процедура отправления тестов пока не работает')
 
 
+
+
 @dp.message_handler(state=Admin.onlyfans)
 async def pido(message:types.Message, state: FSMContext):
     text=message.text
@@ -133,18 +135,27 @@ async def newtest(message:types.Message, state: FSMContext):
     await message.answer('Введите вопрос', reply_markup=stop_create_test)
     await Tests.createq.set()
 
+
+@dp.callback_query_handler(text_contains='km', state=Tests.createq)
+async def stop_creating(call: CallbackQuery,  state: FSMContext):
+    callback_data = call.data
+    if callback_data == 'km:7':
+        await call.message.answer('Тест успешно создан')
+        await state.finish()
+
+
 @dp.message_handler(state=Tests.createq)
 async def creatingq(message:types.Message, state: FSMContext):
     text=message.text
     if text=='Закончить создание теста':
-        await message.answer('Тест успешно создан', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer('Тест успешно создан')
         await state.finish()
     else:
         n = await db.select_max_test_id()
         hui = str(n[0])
         m = int(hui[hui.find('=') + 1:hui.find('>')])
         await db.add_test(m,text)
-        await message.answer('Введите ответ на вопрос', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer('Введите ответ на вопрос')
         await Tests.createa.set()
 
 @dp.message_handler(state=Tests.createa)
